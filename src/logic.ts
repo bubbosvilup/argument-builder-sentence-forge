@@ -20,8 +20,12 @@ export function composeSegments(topic:TopicPack, active:ModuleId[]):Segment[] {
   return s;
 }
 export const plainAnswer=(topic:TopicPack,active:ModuleId[])=>composeSegments(topic,active).map((x,i)=>`${x.breakBefore&&i?'\n\n':''}${x.text}`).join('').replace(/\s+([,.!?])/g,'$1');
-export const points=(active:ModuleId[])=>2+active.reduce((n,id)=>n+metadata[id].weight,0);
-export function levelFromPoints(n:number):Level { return n<=2?'A1':n<=5?'A2':n<=9?'B1':n<=15?'B2':'C1'; }
+export const italianAnswer=(topic:TopicPack,active:ModuleId[])=>{
+  const source:TopicPack={...topic,...topic.italian,italian:topic.italian};
+  return plainAnswer(source,active);
+};
+export const points=(active:ModuleId[])=>4+active.reduce((n,id)=>n+metadata[id].weight,0);
+export function levelFromPoints(n:number):Level { return n<=3?'A1':n<=5?'A2':n<=11?'B1':n<=20?'B2':'C1'; }
 export function quality(active:ModuleId[]):Quality {
   const q:Quality={specificity:1,logic:1,support:0,nuance:0};
   const add:Record<ModuleId,Partial<Quality>>={stance:{logic:1},precision:{specificity:3},hedge:{nuance:2},reason:{logic:2},consequence:{logic:2,nuance:1},example:{support:3},contrast:{nuance:3},counterargument:{nuance:2,support:1},rebuttal:{logic:2,nuance:2},conclusion:{logic:1}};
